@@ -2,61 +2,57 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
+public class ChatServer implements TCPConnectionListener {
 
-public class ChatServer implements ConnectionListener {
+    private final ArrayList<TCPConnection> connections = new ArrayList<>();
+
     public static void main(String[] args) {
-new ChatServer();
+        new ChatServer();
     }
 
-    private final ArrayList<Connection> connectionsList = new ArrayList<>();
-
-    //возможно нуно 2 списка клиенты\агенты
     private ChatServer() {
-        System.out.println("Server running ");
+        System.out.println("Server runing");
         try (ServerSocket serverSocket = new ServerSocket(8189)) {
             while (true) {
                 try {
-                    new Connection(this, serverSocket.accept());
+                    new TCPConnection(this, serverSocket.accept());
 
                 } catch (IOException e) {
-                    System.out.println("Connection exception: " + e);
+                    System.out.println("TCPConnectioexception " + e);
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public synchronized void connectionReady(Connection connection) {
-
-        connectionsList.add(connection);
-        // сдесь будет логика сортировки клиент\агент
-        sendToAll("Client connected:" + connection);
-
+    public synchronized void onConnectionReady(TCPConnection tcpConnection) {
+        connections.add(tcpConnection);
+        SendToAllConnections("Client connected: " + tcpConnection);
     }
 
     @Override
-    public synchronized void onReciveString(Connection connection, String string) {
-      sendToAll(string);
+    public synchronized void onResceiveString(TCPConnection tcpConnection, String value) {
+        SendToAllConnections(value);
     }
 
     @Override
-    public synchronized void onDisconnect(Connection connection) {
-        connectionsList.remove(connection);
+    public synchronized void onDisconect(TCPConnection tcpConnection) {
+        connections.remove(tcpConnection);
+        SendToAllConnections("Client disconnected: " + tcpConnection);
     }
 
     @Override
-    public synchronized void onExeption(Connection connection, Exception e) {
-        System.out.println("Exception: " + e);
+    public synchronized void onExeption(TCPConnection tcpConnection, Exception e) {
+        System.out.println("TCPConnection exeption: " + e);
     }
 
-    private void sendToAll(String string) {
-        System.out.println(string);
-        final int counter = connectionsList.size();
+    private void SendToAllConnections(String value) {
+        System.out.println(value);
+        final int counter = connections.size();
         for (int i = 0; i < counter; i++) {
-            connectionsList.get(i).SendString(string);
+            connections.get(i).sendString(value);
         }
     }
 }
