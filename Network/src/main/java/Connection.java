@@ -17,7 +17,7 @@ public class Connection {
         this(listener, new Socket(ip, port));
     }
 
-    public Connection(ConnectionListener listener, Socket socket) throws IOException {
+    public Connection(final ConnectionListener listener, Socket socket) throws IOException {
         this.listener = listener;
         this.socket = socket;
         in = new BufferedReader(new InputStreamReader(socket.getInputStream(), Charset.forName(UTF_8)));
@@ -25,7 +25,7 @@ public class Connection {
         rxThread = new Thread(new Runnable() {
             public void run() {
                 try {
-                    Connection.this.listener.connectionReady(Connection.this);
+                    listener.connectionReady(Connection.this);
                     while (!rxThread.isInterrupted()) {
                         Connection.this.listener.onReciveString(Connection.this, in.readLine());
                     }
