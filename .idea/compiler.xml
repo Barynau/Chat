@@ -7,10 +7,16 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Chat" />
+        <module name="Client" />
+        <module name="Network" />
+        <module name="Server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Chat" target="1.5" />
+      <module name="Client" target="1.5" />
+      <module name="Network" target="1.5" />
+      <module name="Server" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
