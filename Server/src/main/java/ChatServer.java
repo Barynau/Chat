@@ -5,6 +5,9 @@ import java.util.ArrayList;
 public class ChatServer implements TCPConnectionListener {
 
     private final ArrayList<TCPConnection> connections = new ArrayList<>();
+    private final ArrayList<TCPConnection> connectionsAgents = new ArrayList<>();
+    private final ArrayList<TCPConnection> connectionsClients = new ArrayList<>();
+
 
     public static void main(String[] args) {
         new ChatServer();
@@ -28,19 +31,19 @@ public class ChatServer implements TCPConnectionListener {
 
     @Override
     public synchronized void onConnectionReady(TCPConnection tcpConnection) {
-        connections.add(tcpConnection);
-        SendToAllConnections("Client connected: " + tcpConnection);
+              connections.add(tcpConnection);
+
     }
 
     @Override
     public synchronized void onResceiveString(TCPConnection tcpConnection, String value) {
-        SendToAllConnections(value);
+        // проверка клиент\агент, поделючение к агенту клиента
     }
 
     @Override
     public synchronized void onDisconect(TCPConnection tcpConnection) {
         connections.remove(tcpConnection);
-        SendToAllConnections("Client disconnected: " + tcpConnection);
+        SendToAllConnections("Clent disconnected: " + tcpConnection);
     }
 
     @Override
